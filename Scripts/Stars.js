@@ -4,7 +4,7 @@
             var resizeId;
             var star_num = 50;
             var stars = [];       //create stars
-            var rate = 50;
+            var rate = 100;
             var target; //move towards target
             var hide;     //move away from
 
@@ -47,13 +47,15 @@
 
                 this.x = Math.floor((Math.random() * canvas.width) + 1);
                 this.y = Math.floor((Math.random() * canvas.height) + 1);
+                this.lag = Math.floor((Math.random() * 13) + 2);
                 this.r = 5;
                 this.color = "#" + ("000000" + (0xFFFFFF*Math.random()).toString(16)).substr(-6); //original random color
+                this.i = 1;
 
                 this.React = function(){
         
 
-                    this.r =      Math.floor (25 * Math.sqrt( square(target.x - this.x) + square(target.y - this.y) ) / (canvas.width) ) + 1;
+                    this.r =  Math.floor (25 * Math.sqrt( square(target.x - this.x) + square(target.y - this.y) ) / (canvas.width) ) + 1;
 
 
                     // console.log("square(target.x - this.x) ", square(target.x - this.x) );
@@ -63,11 +65,33 @@
                     // console.log("ALL", Math.sqrt( square(target.x - this.x) + square(target.y - this.y) ) / (canvas.x / 2));
                     //Math.floor (5 * Math.sqrt( square(target.x - this.x) + square(target.y - this.y) ) / (canvas.x / 2) ) + 1;
 
-                  //  console.log("r", this.r);
-                    this.x += (target.x - this.x) * 2 / this.r;
-                    this.y += (target.y - this.y) * 2 / this.r;
-                    //console.log(this.x, this.y);
+                     //  console.log("r", this.r);
 
+    
+
+
+
+                    if (this.i != 1){
+                        
+                        this.x += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  (this.r + this.lag);
+                        this.y += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  (this.r + this.lag);
+
+                        if (Math.abs(target.x - this.x) > 25 || Math.abs(target.y - this.y) > 25 ){
+                            this.i = 1;
+                        }
+
+                    } else {
+
+                        this.x += (target.x - this.x) * .5 / (this.r + this.lag);
+                        this.y += (target.y - this.y) * .5 / (this.r + this.lag);
+
+
+                        if (Math.abs(target.x - this.x) < 3 && Math.abs(target.y - this.y) < 3){
+                            this.i = 0;
+                        }
+
+                    }
+            
                     ctx.fillStyle = this.color; //
                     ctx.beginPath();
                     ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, true);
