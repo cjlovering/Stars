@@ -38,7 +38,6 @@
                     });
 
                     canvas.addEventListener("mouseout", function(eventInfo){
-                        //may want to do more here ... EXPLODE
                         seek = false;
                         i = 2;
                     });
@@ -53,13 +52,13 @@
             });
 
 
-            function Star() {
+            function Star(i) {
 
                 this.x = Math.floor((Math.random() * canvas.width) + 1);
                 this.y = Math.floor((Math.random() * canvas.height) + 1);
                 this.lag = Math.random() < 0.8 ? Math.floor((Math.random() * 13) + 2) : ( Math.random() * 48 + 2 );//Math.floor((Math.random() * 48) + 2);
                 this.r = 5;
-                this.color = "#" + ("000000" + (0xFFFFFF*Math.random()).toString(16)).substr(-6); //original random color
+                this.color = getColor(i);//"#" + ("000000" + (0xFFFFFF*Math.random()).toString(16)).substr(-6); //original random color
                 this.t;
                 //this.color = {r: Math.floor(255 * Math.random()), g: Math.floor(255 * Math.random()), b: Math.floor(255 * Math.random())};
                 this.i = 1;
@@ -72,7 +71,7 @@
                     var ratio = (Math.sqrt( square(target.x - this.x) + square(target.y - this.y) ) / (canvas.width));
                     if (this.i == 2) {
                         this.r = ((Math.floor ( 25 * ratio ) + 1) + this.r * 3) / 4;
-                        
+
                     } else {
                         this.r =  Math.floor ( 25 * ratio ) + 1;
                     }
@@ -148,7 +147,7 @@
             }
 
             function createStars(){
-                for ( var i = 0; i < star_num; i++) stars.push( new Star() );
+                for ( var i = 0; i < star_num; i++) stars.push( new Star(i) );
             }
 
 
@@ -168,7 +167,7 @@
             }
  
             function getColor(n){
-                var colors    = [ "#ccff66", "#FFD700","#66ccff", "#ff6fcf", "#ff6666"];
+                var colors    = [ "#ccff66", "#FFD700","#66ccff", "#ff6fcf", "#ff6666", "#F70000", "#D1FF36", "#7FFF00", "#72E6DA", "#1FE3C7", "#4DF8FF", "#0276FD", "#FF00FF"];
                 n %= colors.length;
                 return colors[n];
             }
