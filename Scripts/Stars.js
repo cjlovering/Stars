@@ -9,7 +9,7 @@
             var seek = true;     //move away from
 
             $(document).ready(function(){
-                
+
                 canvas = document.getElementById('starzone');
                
                 if (canvas.getContext){
@@ -97,26 +97,23 @@
 
                         if (this.i == 2 || xx > canvas.width / 4 || yy > canvas.height / 4){
                             
-                            if (this.i == 5){
-                                this.i = 2;
-                                this.t = {x: Math.floor((Math.random() * canvas.width) + 1), y: Math.floor((Math.random() * canvas.height) + 1)};
-                            }
+                           this.i = 2;
+                                                       console.log(this.i);
+
 
                             var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
                             this.r =  Math.floor ( 25 * ratio ) + 1;
-
 
                             this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
                             this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
 
 
                         } else {
+                            console.log(this.i);
 
                             this.x += 4 * xx; 
                             this.y += 4 * yy;
 
-                            this.i = 5;
-                            //else this.y -= Math.max( 5 * yy, -4); 
                         }
 
                     }
