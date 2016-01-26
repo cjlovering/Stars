@@ -68,8 +68,14 @@
 
                 this.React = function(){
         
+                    //abrupt change from resting to this
                     var ratio = (Math.sqrt( square(target.x - this.x) + square(target.y - this.y) ) / (canvas.width));
-                    this.r =  Math.floor ( 25 * ratio ) + 1;
+                    if (this.i == 2) {
+                        this.r = ((Math.floor ( 25 * ratio ) + 1) + this.r * 3) / 4;
+                        
+                    } else {
+                        this.r =  Math.floor ( 25 * ratio ) + 1;
+                    }
 
                     if (seek){
 
