@@ -9,6 +9,20 @@
             var seek = true;     //move away from
             var avoid = false;  //seek vs hide
             var lagger = 0;
+            var STATE = {
+                FLOCK : 1,
+                REST : 2,
+                EXPLODE : 3,
+                HIDE : 4,
+            };
+
+            var FLOCK = {
+                FLOCK_IN : 1,
+                FLOCK_OUT : 2
+            }
+
+            var current_state = STATE.FLOCK;
+            //STATE
 
             $(document).ready(function(){
 
@@ -28,37 +42,65 @@
 
                     canvas.addEventListener("mousemove", function(eventInfo) {
                         
-                        if (!avoid) seek = true;
-                        
+                        switch (current_state){
+
+                            case STATE.HIDE:
+                                break;
+                            case STATE.SWARM:
+                            case STATE.EXPLODE:
+                            case STATE.FLOCK:
+                            case STATE.REST:
+                                current_state = STATE.FLOCK;
+                        };
+
                         target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};
                     });
 
                     canvas.addEventListener("mouseup", function(eventInfo){
                         //may want to do more here ... EXPLODE
 
-                        if (avoid) {
-                            avoid = false; ///??
-                            seek = true;                          
-                        } else {
-
-                            if (seek) {
-
-                                seek = false;
+                        switch (current_state){
+                
+                            case STATE.HIDE:
+                                current_state = STATE.FLOCK;
+                                break;
+                            case STATE.EXPLODE:
+                                current_state = STATE.HIDE;
+                                break;
+                            case STATE.FLOCK:
+                                current_state = STATE.EXPLODE;
                                 lagger = 150;
                                 target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};                        
-                            
-                            } else {
+                            case STATE.REST:
+                                current_state = STATE.FLOCK;
+                        };
 
-                                avoid = true;
+
+
+
+                        // if (avoid) {
+                        //     avoid = false; ///??
+                        //     seek = true;                          
+                        // } else {
+
+                        //     if (seek) {
+
+                        //         seek = false;
+                                
                             
-                            }
-                        }
+                        //     } else {
+
+                        //         avoid = true;
+                            
+                        //     }
+                        // }
                            
                     });
 
                     canvas.addEventListener("mouseout", function(eventInfo){
-                        seek = false;
-                        i = 2;
+                        current_state = STATE.HIDE;
+                        // seek = false;
+                        // i = 2;
                     });
 
                     $(window).resize(function(){
@@ -81,6 +123,7 @@
                 this.t;
                 //this.color = {r: Math.floor(255 * Math.random()), g: Math.floor(255 * Math.random()), b: Math.floor(255 * Math.random())};
                 this.i = 1;
+                this.subState = REST;
                 this.t = {x: Math.floor((Math.random() * canvas.width) + 1), y: Math.floor((Math.random() * canvas.height) + 1)};
 
 
@@ -97,66 +140,127 @@
                     }
 
 
-                    if (avoid){
+                    switch(current_state){
 
-                        console.log("avoid");
+                        case STATE.HIDE:
+                        
+                            var xx = (target.x - this.x);
+                            var yy = (target.y - this.y);
 
-                        var xx = (target.x - this.x);
-                        var yy = (target.y - this.y);
+                            var rr = (Math.sqrt( square(xx) + square(yy) ) / (canvas.width / 2));
+                            this.r =  Math.floor ( 25 * ratio ) + 1;
 
-                        var rr = (Math.sqrt( square(xx) + square(yy) ) / (canvas.width / 2));
-                        this.r =  Math.floor ( 25 * ratio ) + 1;
+                            this.x += (xx * 100 * rr) / (this.r + this.lag);
+                            this.y += (yy * 100 * rr) / (this.r + this.lag);
+                            break;
 
-                        this.x += (xx * 100 * rr) / (this.r + this.lag);
-                        this.y += (yy * 100 * rr) / (this.r + this.lag);
+                        case STATE.FLOCK:
+                            switch(this.subState){
+                                case FLOCK_OUT:
+                                    this.x += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
+                                    this.y += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
 
-                    } else if (seek) {
-        
-                        if (this.i == 0){
-                            
-                            this.x += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
-                            this.y += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
+                                    if (Math.abs(target.x - this.x) > 35 || Math.abs(target.y - this.y) > 35 ){
+                                        this.subState = FLOCK.FLOCK_IN;
+                                    }
 
-                            if (Math.abs(target.x - this.x) > 35 || Math.abs(target.y - this.y) > 35 ){
-                                this.i = 1;
+                                    break;
+                                case FLOCK_IN:
+                                default:
+                                    this.x += (target.x - this.x) * .5 / (this.r + this.lag + lagger);
+                                    this.y += (target.y - this.y) * .5 / (this.r + this.lag + lagger);
+
+
+                                    if (Math.abs(target.x - this.x) < 3 && Math.abs(target.y - this.y) < 3){
+                                        this.subState = FLOCK.FLOCK_OUT;
+                                    }
                             }
 
-                        } else {
+                        case STATE.EXPLODE:
+                            switch (this.subState){
+                                case STATE.EXPLODE:
+                                    var xx = (target.x - this.x);
+                                    var yy = (target.y - this.y);
+                                    if (this.i == 2 || xx > canvas.width / 4 || yy > canvas.height / 4) this.subState = STATE.REST;
+                                    this.x += 4 * xx; 
+                                    this.y += 4 * yy;
+                                    break;
 
-                            this.x += (target.x - this.x) * .5 / (this.r + this.lag + lagger);
-                            this.y += (target.y - this.y) * .5 / (this.r + this.lag + lagger);
+                                case STATE.REST:
+                                    this.i = 2;
 
+                                    var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
+                                    this.r =  Math.floor ( 25 * ratio ) + 1;
 
-                            if (Math.abs(target.x - this.x) < 3 && Math.abs(target.y - this.y) < 3){
-                                this.i = 0;
-                            }
+                                    this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
+                                    this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
+                                    break;
+                                };
 
-                        }
-
-                    } else {
-
-                        var xx = (target.x - this.x);
-                        var yy = (target.y - this.y);
-
-                        if (this.i == 2 || xx > canvas.width / 4 || yy > canvas.height / 4){
-                            
-                           this.i = 2;
-
+                        case STATE.REST:
                             var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
                             this.r =  Math.floor ( 25 * ratio ) + 1;
 
                             this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
                             this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
 
+                            break;
 
-                        } else {
+                    };
 
-                            this.x += 4 * xx; 
-                            this.y += 4 * yy;
+              
+                    // if (avoid){
 
-                        }
+                    //     console.log("avoid");
 
-                    }
+
+                    // } else if (seek) {
+        
+                    //     if (this.i == 0){
+                            
+                    //         this.x += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
+                    //         this.y += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
+
+                    //         if (Math.abs(target.x - this.x) > 35 || Math.abs(target.y - this.y) > 35 ){
+                    //             this.i = 1;
+                    //         }
+
+                    //     } else {
+
+                    //         this.x += (target.x - this.x) * .5 / (this.r + this.lag + lagger);
+                    //         this.y += (target.y - this.y) * .5 / (this.r + this.lag + lagger);
+
+
+                    //         if (Math.abs(target.x - this.x) < 3 && Math.abs(target.y - this.y) < 3){
+                    //             this.i = 0;
+                    //         }
+
+                    //     }
+
+                    // } else {
+
+                    //     var xx = (target.x - this.x);
+                    //     var yy = (target.y - this.y);
+
+                    //     if (this.i == 2 || xx > canvas.width / 4 || yy > canvas.height / 4){
+                            
+                    //        this.i = 2;
+
+                    //         var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
+                    //         this.r =  Math.floor ( 25 * ratio ) + 1;
+
+                    //         this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
+                    //         this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
+
+
+                    //     } else {
+
+                    //         this.x += 4 * xx; 
+                    //         this.y += 4 * yy;
+
+                    //     }
+
+                    // }
                     
                     
                     ctx.fillStyle = this.color; //getShade(this.color, ratio); 
