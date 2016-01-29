@@ -123,7 +123,7 @@
                 this.t;
                 //this.color = {r: Math.floor(255 * Math.random()), g: Math.floor(255 * Math.random()), b: Math.floor(255 * Math.random())};
                 this.i = 1;
-                this.subState = STATE.FLOCK_IN;
+                this.subState = FLOCK.FLOCK_IN;
                 this.t = {x: Math.floor((Math.random() * canvas.width) + 1), y: Math.floor((Math.random() * canvas.height) + 1)};
 
 
@@ -156,7 +156,7 @@
 
                         case STATE.FLOCK:
                             switch(this.subState){
-                                case FLOCK_OUT:
+                                case FLOCK.FLOCK_OUT:
                                     this.x += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
                                     this.y += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
 
@@ -165,7 +165,7 @@
                                     }
 
                                     break;
-                                case FLOCK_IN:
+                                case FLOCK.FLOCK_IN:
                                 default:
                                     this.x += (target.x - this.x) * .5 / (this.r + this.lag + lagger);
                                     this.y += (target.y - this.y) * .5 / (this.r + this.lag + lagger);
