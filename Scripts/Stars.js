@@ -40,9 +40,18 @@
                             avoid = false; ///??
                             seek = true;                          
                         } else {
-                            seek = false;
-                            lagger = 150;
-                            target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};                        }
+
+                            if (seek) {
+
+                                seek = false;
+                                lagger = 150;
+                                target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};                        }
+
+                            } else {
+
+                                avoid = true;
+                            }
+                           
                     });
 
                     canvas.addEventListener("mouseout", function(eventInfo){
@@ -87,6 +96,8 @@
 
 
                     if (avoid){
+
+                        console.log("avoid");
 
                         var xx = (target.x - this.x);
                         var yy = (target.y - this.y);
