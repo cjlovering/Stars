@@ -7,6 +7,7 @@
             var rate = 100;
             var target; //move towards target
             var seek = true;     //move away from
+            var seeking = true;  //seek vs hide
             var lagger = 0;
 
             $(document).ready(function(){
@@ -32,9 +33,15 @@
 
                     canvas.addEventListener("mouseup", function(eventInfo){
                         //may want to do more here ... EXPLODE
-                        seek = false;
-                        lagger = 150;
-                        target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};
+
+                        if (!seeking) {
+                            seeking = true; ///??
+                            seek = false;
+                            lagger = 150;
+                            target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};
+                        } else {
+                            seeking = false;
+                        }
                     });
 
                     canvas.addEventListener("mouseout", function(eventInfo){
@@ -76,52 +83,61 @@
                         this.r =  Math.floor ( 25 * ratio ) + 1;
                     }
 
-                    if (seek){
 
-                        if (this.i == 0){
-                            
-                            this.x += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
-                            this.y += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
+                    if (seeking){
+                        if (seek){
+                            if (this.i == 0){
+                                
+                                this.x += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
+                                this.y += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
 
-                            if (Math.abs(target.x - this.x) > 35 || Math.abs(target.y - this.y) > 35 ){
-                                this.i = 1;
+                                if (Math.abs(target.x - this.x) > 35 || Math.abs(target.y - this.y) > 35 ){
+                                    this.i = 1;
+                                }
+
+                            } else {
+
+                                this.x += (target.x - this.x) * .5 / (this.r + this.lag + lagger);
+                                this.y += (target.y - this.y) * .5 / (this.r + this.lag + lagger);
+
+
+                                if (Math.abs(target.x - this.x) < 3 && Math.abs(target.y - this.y) < 3){
+                                    this.i = 0;
+                                }
+
                             }
 
                         } else {
 
-                            this.x += (target.x - this.x) * .5 / (this.r + this.lag + lagger);
-                            this.y += (target.y - this.y) * .5 / (this.r + this.lag + lagger);
+                            var xx = (target.x - this.x);
+                            var yy = (target.y - this.y);
+
+                            if (this.i == 2 || xx > canvas.width / 4 || yy > canvas.height / 4){
+                                
+                               this.i = 2;
+
+                                var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
+                                this.r =  Math.floor ( 25 * ratio ) + 1;
+
+                                this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
+                                this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
 
 
-                            if (Math.abs(target.x - this.x) < 3 && Math.abs(target.y - this.y) < 3){
-                                this.i = 0;
+                            } else {
+
+                                this.x += 4 * xx; 
+                                this.y += 4 * yy;
+
                             }
 
                         }
+                    } else { //avoid
 
-                    } else {
+                        var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
+                        this.r =  Math.floor ( 25 * ratio ) + 1;
 
-                        var xx = (target.x - this.x);
-                        var yy = (target.y - this.y);
-
-                        if (this.i == 2 || xx > canvas.width / 4 || yy > canvas.height / 4){
-                            
-                           this.i = 2;
-
-                            var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
-                            this.r =  Math.floor ( 25 * ratio ) + 1;
-
-                            this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
-                            this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
-
-
-                        } else {
-                            console.log(this.i);
-
-                            this.x += 4 * xx; 
-                            this.y += 4 * yy;
-
-                        }
+                        this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
+                        this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
 
                     }
                     
@@ -193,15 +209,3 @@
                 return i * i;
             }
         })(); 
-
-
-        /*
-        ublic static Color Lighten(Color inColor, double inAmount)
-{
-  return Color.FromArgb(
-    inColor.A,
-    (int) Math.Min(255, inColor.R + 255 * inAmount),
-    (int) Math.Min(255, inColor.G + 255 * inAmount),
-    (int) Math.Min(255, inColor.B + 255 * inAmount) );
-}
-*/
