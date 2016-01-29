@@ -45,8 +45,8 @@
 
                                 seek = false;
                                 lagger = 150;
-                                target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};                        }
-
+                                target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};                        
+                            
                             } else {
 
                                 avoid = true;
