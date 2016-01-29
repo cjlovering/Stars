@@ -7,7 +7,7 @@
             var rate = 100;
             var target; //move towards target
             var seek = true;     //move away from
-            var seeking = true;  //seek vs hide
+            var avoid = false;  //seek vs hide
             var lagger = 0;
 
             $(document).ready(function(){
@@ -76,6 +76,7 @@
         
                     //abrupt change from resting to this
                     var ratio = (Math.sqrt( square(target.x - this.x) + square(target.y - this.y) ) / (canvas.width));
+                    
                     if (this.i == 2) {
                         this.r = ((Math.floor ( 25 * ratio ) + 1) + this.r * 3) / 4;
 
@@ -84,62 +85,65 @@
                     }
 
 
-                    if (seeking){
-                        if (seek){
-                            if (this.i == 0){
-                                
-                                this.x += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
-                                this.y += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
+                    if (avoid){
 
-                                if (Math.abs(target.x - this.x) > 35 || Math.abs(target.y - this.y) > 35 ){
-                                    this.i = 1;
-                                }
+                        var xx = (target.x - this.x);
+                        var yy = (target.y - this.y);
 
-                            } else {
+                        var rr = (Math.sqrt( square(xx) + square(yy) ) / (canvas.width / 2));
+                        this.r =  Math.floor ( 25 * ratio ) + 1;
 
-                                this.x += (target.x - this.x) * .5 / (this.r + this.lag + lagger);
-                                this.y += (target.y - this.y) * .5 / (this.r + this.lag + lagger);
+                        this.x += (xx * 10 * rr) * .5 / (this.r + this.lag);
+                        this.y += (yy * 10 * rr) * .5 / (this.r + this.lag);
 
+                    } else if (seek) {
+        
+                        if (this.i == 0){
+                            
+                            this.x += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
+                            this.y += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
 
-                                if (Math.abs(target.x - this.x) < 3 && Math.abs(target.y - this.y) < 3){
-                                    this.i = 0;
-                                }
-
+                            if (Math.abs(target.x - this.x) > 35 || Math.abs(target.y - this.y) > 35 ){
+                                this.i = 1;
                             }
 
                         } else {
 
-                            var xx = (target.x - this.x);
-                            var yy = (target.y - this.y);
-
-                            if (this.i == 2 || xx > canvas.width / 4 || yy > canvas.height / 4){
-                                
-                               this.i = 2;
-
-                                var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
-                                this.r =  Math.floor ( 25 * ratio ) + 1;
-
-                                this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
-                                this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
+                            this.x += (target.x - this.x) * .5 / (this.r + this.lag + lagger);
+                            this.y += (target.y - this.y) * .5 / (this.r + this.lag + lagger);
 
 
-                            } else {
-
-                                this.x += 4 * xx; 
-                                this.y += 4 * yy;
-
+                            if (Math.abs(target.x - this.x) < 3 && Math.abs(target.y - this.y) < 3){
+                                this.i = 0;
                             }
 
                         }
-                    } else { //avoid
 
-                        var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
-                        this.r =  Math.floor ( 25 * ratio ) + 1;
+                    } else {
 
-                        this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
-                        this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
+                        var xx = (target.x - this.x);
+                        var yy = (target.y - this.y);
+
+                        if (this.i == 2 || xx > canvas.width / 4 || yy > canvas.height / 4){
+                            
+                           this.i = 2;
+
+                            var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
+                            this.r =  Math.floor ( 25 * ratio ) + 1;
+
+                            this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
+                            this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
+
+
+                        } else {
+
+                            this.x += 4 * xx; 
+                            this.y += 4 * yy;
+
+                        }
 
                     }
+                    
                     
                     ctx.fillStyle = this.color; //getShade(this.color, ratio); 
                     ctx.beginPath();
