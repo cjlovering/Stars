@@ -50,7 +50,9 @@
                             } else {
 
                                 avoid = true;
+                            
                             }
+                        }
                            
                     });
 
