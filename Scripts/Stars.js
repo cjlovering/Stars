@@ -1,5 +1,9 @@
 (function(){
 
+            /* constants */
+            var ESCAPE_BOUND; //canvas / 2
+
+
             var canvas, ctx;
             var resizeId;
             var star_num = 500;
@@ -16,9 +20,11 @@
                 HIDE : 4,
             };
 
-            var FLOCK = {
-                FLOCK_IN : 1,
-                FLOCK_OUT : 2
+            var SUB = {
+                FLOCK_IN : 11,
+                FLOCK_OUT : 12,
+                HIDE: 13,
+                EXPLODE: 14
             }
 
             var current_state = STATE.FLOCK;
@@ -123,7 +129,7 @@
                 this.t;
                 //this.color = {r: Math.floor(255 * Math.random()), g: Math.floor(255 * Math.random()), b: Math.floor(255 * Math.random())};
                 this.i = 1;
-                this.subState = FLOCK.FLOCK_IN;
+                this.subState = SUB.FLOCK_IN;
                 this.t = {x: Math.floor((Math.random() * canvas.width) + 1), y: Math.floor((Math.random() * canvas.height) + 1)};
 
 
@@ -131,54 +137,76 @@
         
                     //abrupt change from resting to this
                     var ratio = (Math.sqrt( square(target.x - this.x) + square(target.y - this.y) ) / (canvas.width));
-                    
-                    if (this.i == 2) {
-                        this.r = ((Math.floor ( 25 * ratio ) + 1) + this.r * 3) / 4;
+                    this.r = Math.floor ( 25 * ratio ) + 1;
 
-                    } else {
-                        this.r =  Math.floor ( 25 * ratio ) + 1;
-                    }
+                    // if (this.i == 2) { //hide?
+                    //     this.r = ((Math.floor ( 25 * ratio ) + 1) + this.r * 3) / 4;
+
+                    // } else {
+                    //     this.r =  Math.floor ( 25 * ratio ) + 1;
+                    // }
 
 
                     switch(current_state){
 
                         case STATE.HIDE:
-                        
+
                             var xx = (target.x - this.x);
                             var yy = (target.y - this.y);
-
                             var rr = (Math.sqrt( square(xx) + square(yy) ) / (canvas.width / 2));
-                            this.r =  Math.floor ( 25 * ratio ) + 1;
+                            //this.r =  Math.floor ( 25 * ratio ) + 1;
+                            this.r = ((Math.floor ( 25 * ratio ) + 1) + this.r * 3) / 4;
 
-                            this.x += (xx * 100 * rr) / (this.r + this.lag);
-                            this.y += (yy * 100 * rr) / (this.r + this.lag);
+                            this.x += (xx * 2) / (this.r + this.lag);
+                            this.y += (yy * 2) / (this.r + this.lag);
                             break;
 
                         case STATE.FLOCK:
+                            
                             switch(this.subState){
-                                case FLOCK.FLOCK_OUT:
+                               
+                                case SUB.FLOCK_OUT:
+                                    //TODO: make this smoother / better arcs
                                     this.x += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
                                     this.y += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
 
                                     if (Math.abs(target.x - this.x) > 35 || Math.abs(target.y - this.y) > 35 ){
-                                        this.subState = FLOCK.FLOCK_IN;
+                                        this.subState = SUB.FLOCK_IN;
                                     }
 
                                     break;
-                                case FLOCK.FLOCK_IN:
+                                case SUB.REST:
+                                    var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
+                                    this.r =  Math.floor ( 25 * ratio ) + 1;
+
+                                    this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
+                                    this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
+
+                                    if (Math.abs(target.x - this.x) > ESCAPE_BOUND.X || Math.abs(target.y - this.y) > ESCAPE_BOUND.Y ){
+                                        this.subState = SUB.FLOCK_IN;
+                                        break;
+                                    }
+
+                                    break;
+                                case SUB.FLOCK_IN:
                                 default:
+                                    /* ESCAPE DISTANCE */
+                                    if (Math.abs(target.x - this.x) > ESCAPE_BOUND.X || Math.abs(target.y - this.y) > ESCAPE_BOUND.Y ){
+                                        this.subState = SUB.REST;
+                                        break;
+                                    }
+
                                     this.x += (target.x - this.x) * .5 / (this.r + this.lag + lagger);
                                     this.y += (target.y - this.y) * .5 / (this.r + this.lag + lagger);
 
-
                                     if (Math.abs(target.x - this.x) < 3 && Math.abs(target.y - this.y) < 3){
-                                        this.subState = FLOCK.FLOCK_OUT;
+                                        this.subState = SUB.FLOCK_OUT;
                                     }
                             }
 
                         case STATE.EXPLODE:
                             switch (this.subState){
-                                case STATE.REST:
+                                case SUB.REST:
                                     this.i = 2;
 
                                     var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
@@ -188,20 +216,19 @@
                                     this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
                                     
                                     break;
-                                case STATE.EXPLODE:
+                                case SUB.EXPLODE:
                                 default:
                                     var xx = (target.x - this.x);
                                     var yy = (target.y - this.y);
                                     if (this.i == 2 || xx > canvas.width / 4 || yy > canvas.height / 4) 
-                                        this.subState = STATE.REST;
+                                        this.subState = SUB.REST;
                                     this.x += 4 * xx; 
                                     this.y += 4 * yy;
                                     break;
-
-
                                 };
 
                         case STATE.REST:
+
                             var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
                             this.r =  Math.floor ( 25 * ratio ) + 1;
 
@@ -297,7 +324,7 @@
                 setTimeout(function(){
                     drawStars();
                     loop();
-                    if (seek && lagger > 0) lagger -= 10;
+                    if (current_state == STATE.FLOCK && lagger > 0) lagger -= 10;
 
                 }, 1000/rate);
             }
@@ -329,6 +356,9 @@
 
                 canvas.width = w;
                 canvas.height = h; 
+
+                /* constants */
+                ESCAPE_BOUND = {X: w / 2, Y: h / 2};
             }
 
             function square(i){
