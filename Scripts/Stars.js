@@ -178,14 +178,6 @@
 
                         case STATE.EXPLODE:
                             switch (this.subState){
-                                case STATE.EXPLODE:
-                                    var xx = (target.x - this.x);
-                                    var yy = (target.y - this.y);
-                                    if (this.i == 2 || xx > canvas.width / 4 || yy > canvas.height / 4) this.subState = STATE.REST;
-                                    this.x += 4 * xx; 
-                                    this.y += 4 * yy;
-                                    break;
-
                                 case STATE.REST:
                                     this.i = 2;
 
@@ -194,7 +186,19 @@
 
                                     this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
                                     this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
+                                    
                                     break;
+                                case STATE.EXPLODE:
+                                default:
+                                    var xx = (target.x - this.x);
+                                    var yy = (target.y - this.y);
+                                    if (this.i == 2 || xx > canvas.width / 4 || yy > canvas.height / 4) 
+                                        this.subState = STATE.REST;
+                                    this.x += 4 * xx; 
+                                    this.y += 4 * yy;
+                                    break;
+
+
                                 };
 
                         case STATE.REST:
