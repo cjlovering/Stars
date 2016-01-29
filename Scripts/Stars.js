@@ -107,8 +107,8 @@
                         var rr = (Math.sqrt( square(xx) + square(yy) ) / (canvas.width / 2));
                         this.r =  Math.floor ( 25 * ratio ) + 1;
 
-                        this.x += (xx * 10 * rr) * .5 / (this.r + this.lag);
-                        this.y += (yy * 10 * rr) * .5 / (this.r + this.lag);
+                        this.x += (xx * 100 * rr) / (this.r + this.lag);
+                        this.y += (yy * 100 * rr) / (this.r + this.lag);
 
                     } else if (seek) {
         
