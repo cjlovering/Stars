@@ -2,7 +2,7 @@
 
             /* constants */
             var ESCAPE_BOUND; //canvas / 2
-
+            var CANVAS_BOUND;
 
             var canvas, ctx;
             var resizeId;
@@ -52,7 +52,6 @@
 
                             case STATE.HIDE:
                                 break;
-                            case STATE.SWARM:
                             case STATE.EXPLODE:
                             case STATE.FLOCK:
                             case STATE.REST:
@@ -77,8 +76,10 @@
                                 current_state = STATE.EXPLODE;
                                 lagger = 150;
                                 target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};                        
+                                break;
                             case STATE.REST:
                                 current_state = STATE.FLOCK;
+                                break;
                         };
 
 
@@ -146,7 +147,7 @@
                     //     this.r =  Math.floor ( 25 * ratio ) + 1;
                     // }
 
-
+                    //TODO keep everything within the bounds
                     switch(current_state){
 
                         case STATE.HIDE:
@@ -175,6 +176,7 @@
                                     }
 
                                     break;
+
                                 case SUB.REST:
                                     var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
                                     this.r =  Math.floor ( 25 * ratio ) + 1;
@@ -190,6 +192,7 @@
                                     break;
                                 case SUB.FLOCK_IN:
                                 default:
+                                    
                                     /* ESCAPE DISTANCE */
                                     if (Math.abs(target.x - this.x) > ESCAPE_BOUND.X || Math.abs(target.y - this.y) > ESCAPE_BOUND.Y ){
                                         this.subState = SUB.REST;
@@ -359,6 +362,7 @@
 
                 /* constants */
                 ESCAPE_BOUND = {X: w / 2, Y: h / 2};
+                CANVAS_BOUND = {X: w , Y: h };
             }
 
             function square(i){
