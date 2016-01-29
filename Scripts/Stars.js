@@ -27,7 +27,9 @@
                     drawStars();
 
                     canvas.addEventListener("mousemove", function(eventInfo) {
-                        seek = true;
+                        
+                        if (!avoid) seek = true;
+                        
                         target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};
                     });
 
