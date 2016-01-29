@@ -34,14 +34,13 @@
                     canvas.addEventListener("mouseup", function(eventInfo){
                         //may want to do more here ... EXPLODE
 
-                        if (!seeking) {
-                            seeking = true; ///??
+                        if (avoid) {
+                            avoid = false; ///??
+                            seek = true;                          
+                        } else {
                             seek = false;
                             lagger = 150;
-                            target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};
-                        } else {
-                            seeking = false;
-                        }
+                            target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};                        }
                     });
 
                     canvas.addEventListener("mouseout", function(eventInfo){
