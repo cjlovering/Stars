@@ -83,7 +83,7 @@
                     });
 
                     canvas.addEventListener("mouseout", function(eventInfo){
-                        //current_state = STATE.HIDE;
+                        current_state = STATE.REST;
 
                     });
 
