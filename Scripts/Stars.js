@@ -101,14 +101,14 @@
 
                 this.x = Math.floor((Math.random() * canvas.width) + 1);
                 this.y = Math.floor((Math.random() * canvas.height) + 1);
+
                 this.lag = Math.random() < 0.8 ? Math.floor((Math.random() * 13) + 2) : ( Math.random() * 48 + 2 );//Math.floor((Math.random() * 48) + 2);
-                this.r = 5;
-                this.color = getColor(i);//"#" + ("000000" + (0xFFFFFF*Math.random()).toString(16)).substr(-6); //original random color
-                this.t;
-                //this.color = {r: Math.floor(255 * Math.random()), g: Math.floor(255 * Math.random()), b: Math.floor(255 * Math.random())};
-                this.i = 1;
-                this.subState = SUB.FLOCK_IN;
                 this.t = {x: Math.floor((Math.random() * canvas.width) + 1), y: Math.floor((Math.random() * canvas.height) + 1)};
+
+                this.r = 5;
+                this.color = getColor(i);
+                this.subState = SUB.FLOCK_IN;
+
 
 
                 this.React = function(){
@@ -165,10 +165,10 @@
                                 default:
                                     
                                     /* ESCAPE DISTANCE */
-                                    // if (Math.abs(target.x - this.x) > ESCAPE_BOUND.X || Math.abs(target.y - this.y) > ESCAPE_BOUND.Y ){
-                                    //     this.subState = SUB.REST;
-                                    //     break;
-                                    // }
+                                    if (Math.abs(target.x - this.x) > ESCAPE_BOUND.X || Math.abs(target.y - this.y) > ESCAPE_BOUND.Y ){
+                                        this.subState = SUB.REST;
+                                        break;
+                                    }
 
                                     this.x += (target.x - this.x) * .5 / (this.r + this.lag + lagger);
                                     this.y += (target.y - this.y) * .5 / (this.r + this.lag + lagger);
@@ -179,36 +179,40 @@
                             }
 
                         case STATE.EXPLODE:
+
                             switch (this.subState){
+                                
                                 case SUB.REST:
-                                    this.i = 2;
 
                                     var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
+                                    
                                     this.r =  Math.floor ( 25 * ratio ) + 1;
 
                                     this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
                                     this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
                                     
                                     break;
+
                                 case SUB.EXPLODE:
                                 default:
+
                                     var xx = (target.x - this.x);
                                     var yy = (target.y - this.y);
-                                    if (this.i == 2 || xx > canvas.width / 4 || yy > canvas.height / 4) 
+
+                                    if ( xx > canvas.width / 4 || yy > canvas.height / 4 ) {
                                         this.subState = SUB.REST;
-                                    
-
-                                    this.x = this.x + 2 * xx < CANVAS_BOUND.X && this.x + 2 * xx > 0 ? this.x + 2 * xx :   
-                                    
-                                    this.y += 4 * yy;
-
+                                        break;
+                                    }
+                                                                        
+                                    this.y += 2 * yy;
+                                    this.x += 2 * xx;
 
                                     break;
                                 };
 
                         case STATE.REST:
 
-                            var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
+                            var ratio = (Math.sqrt( square( this.t.x - this.x ) + square( this.t.y - this.y ) ) / ( canvas.width ));
                             this.r =  Math.floor ( 25 * ratio ) + 1;
 
                             this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
