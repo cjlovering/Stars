@@ -123,15 +123,22 @@
                     switch(current_state){
 
                         case STATE.HIDE:
-
-                            var xx = (target.x - this.x);
-                            var yy = (target.y - this.y);
-                            var rr = (Math.sqrt( square(xx) + square(yy) ) / (canvas.width / 2));
+                            var ratio = (Math.sqrt( square( this.t.x - this.x ) + square( this.t.y - this.y ) ) / ( canvas.width ));
                             this.r =  Math.floor ( 25 * ratio ) + 1;
-                            
-                            this.x += (xx * 2) / (this.r + this.lag);
-                            this.y += (yy * 2) / (this.r + this.lag);
+
+                            this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
+                            this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
+
                             break;
+
+                            // var xx = (target.x - this.x);
+                            // var yy = (target.y - this.y);
+                            // var rr = (Math.sqrt( square(xx) + square(yy) ) / (canvas.width / 2));
+                            // this.r =  Math.floor ( 25 * ratio ) + 1;
+                            
+                            // this.x += (xx * 2) / (this.r + this.lag);
+                            // this.y += (yy * 2) / (this.r + this.lag);
+                            // break;
 
                         case STATE.FLOCK:
                             
@@ -149,6 +156,7 @@
                                     break;
 
                                 case SUB.REST:
+
                                     var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
                                     this.r =  Math.floor ( 25 * ratio ) + 1;
 
@@ -165,10 +173,10 @@
                                 default:
                                     
                                     /* ESCAPE DISTANCE */
-                                    if (Math.abs(target.x - this.x) > ESCAPE_BOUND.X || Math.abs(target.y - this.y) > ESCAPE_BOUND.Y ){
-                                        this.subState = SUB.REST;
-                                        break;
-                                    }
+                                    // if (Math.abs(target.x - this.x) > ESCAPE_BOUND.X || Math.abs(target.y - this.y) > ESCAPE_BOUND.Y ){
+                                    //     this.subState = SUB.REST;
+                                    //     break;
+                                    // }
 
                                     this.x += (target.x - this.x) * .5 / (this.r + this.lag + lagger);
                                     this.y += (target.y - this.y) * .5 / (this.r + this.lag + lagger);
@@ -181,7 +189,7 @@
                         case STATE.EXPLODE:
 
                             switch (this.subState){
-                                
+
                                 case SUB.REST:
 
                                     var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
