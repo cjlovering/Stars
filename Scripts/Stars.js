@@ -8,7 +8,7 @@
             var resizeId;
             var star_num = 500;
             var stars = [];       //create stars
-            var rate = 100;
+            var rate = 4000;//100
             var target; //move towards target
             var seek = true;     //move away from
             var avoid = false;  //seek vs hide
@@ -69,7 +69,8 @@
                             //     current_state = STATE.FLOCK;
                             //     break;
                             case STATE.EXPLODE:
-                                current_state = STATE.HIDE;
+                                current_state = STATE.REST;
+                                //current_state = STATE.HIDE;
                                 break;
                             case STATE.FLOCK:
                                 current_state = STATE.EXPLODE;
@@ -123,6 +124,7 @@
                     switch(current_state){
 
                         case STATE.HIDE:
+
                             var ratio = (Math.sqrt( square( this.t.x - this.x ) + square( this.t.y - this.y ) ) / ( canvas.width ));
                             this.r =  Math.floor ( 25 * ratio ) + 1;
 
