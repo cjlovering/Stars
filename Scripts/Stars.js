@@ -23,7 +23,7 @@
             var SUB = {
                 FLOCK_IN : 11,
                 FLOCK_OUT : 12,
-                HIDE: 13,
+                //HIDE: 13,
                 EXPLODE: 14
             }
 
@@ -50,8 +50,8 @@
                         
                         switch (current_state){
 
-                            case STATE.HIDE:
-                                break;
+                            // case STATE.HIDE:
+                            //     break;
                             case STATE.EXPLODE:
                             case STATE.FLOCK:
                             case STATE.REST:
@@ -118,20 +118,19 @@
                     var ratio = (Math.sqrt( square(target.x - this.x) + square(target.y - this.y) ) / (canvas.width));
                     
                     /* attempt to smooth REST -> FLOCK */
-                    if(current_state == STATE.REST) this.r = ((Math.floor ( 25 * ratio ) + 1) + this.r * 3) / 4;
-                    else this.r = Math.floor ( 25 * ratio ) + 1;
+                    this.r = Math.floor ( 25 * ratio ) + 1;
 
                     switch(current_state){
 
-                        case STATE.HIDE:
+                        // case STATE.HIDE:
 
-                            var ratio = (Math.sqrt( square( this.t.x - this.x ) + square( this.t.y - this.y ) ) / ( canvas.width ));
-                            this.r =  Math.floor ( 25 * ratio ) + 1;
+                        //     var ratio = (Math.sqrt( square( this.t.x - this.x ) + square( this.t.y - this.y ) ) / ( canvas.width ));
+                        //     this.r =  Math.floor ( 25 * ratio ) + 1;
 
-                            this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
-                            this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
+                        //     this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
+                        //     this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
 
-                            break;
+                        //     break;
 
                             // var xx = (target.x - this.x);
                             // var yy = (target.y - this.y);
@@ -148,6 +147,7 @@
                                
                                 case SUB.FLOCK_OUT:
                                     //TODO: make this smoother / better arcs
+                                    console.log("FLOCK_OUT");
                                     this.x += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
                                     this.y += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
 
@@ -158,7 +158,8 @@
                                     break;
 
                                 case SUB.REST:
-
+                                    this.r = ((Math.floor ( 25 * ratio ) + 1) + this.r * 3) / 4;
+                                    console.log("FLOCK_REST");
                                     var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
                                     this.r =  Math.floor ( 25 * ratio ) + 1;
 
@@ -171,6 +172,7 @@
                                     }
 
                                     break;
+
                                 case SUB.FLOCK_IN:
                                 default:
                                     
@@ -195,8 +197,8 @@
                                 case SUB.REST:
 
                                     var ratio = (Math.sqrt( square(this.t.x - this.x) + square(this.t.y - this.y) ) / (canvas.width));
-                                    
-                                    this.r =  Math.floor ( 25 * ratio ) + 1;
+                                    this.r = ((Math.floor ( 25 * ratio ) + 1) + this.r * 3) / 4;
+                                    //this.r =  Math.floor ( 25 * ratio ) + 1;
 
                                     this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
                                     this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
@@ -223,7 +225,8 @@
                         case STATE.REST:
 
                             var ratio = (Math.sqrt( square( this.t.x - this.x ) + square( this.t.y - this.y ) ) / ( canvas.width ));
-                            this.r =  Math.floor ( 25 * ratio ) + 1;
+                            this.r = ((Math.floor ( 25 * ratio ) + 1) + this.r * 3) / 4;
+                            //this.r =  Math.floor ( 25 * ratio ) + 1;
 
                             this.x += (this.t.x - this.x) * .5 / (this.r + this.lag);
                             this.y += (this.t.y - this.y) * .5 / (this.r + this.lag);
