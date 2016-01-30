@@ -63,7 +63,6 @@
 
                     canvas.addEventListener("mouseup", function(eventInfo){
                         //may want to do more here ... EXPLODE
-
                         switch (current_state){
                 
                             case STATE.HIDE:
@@ -81,33 +80,10 @@
                                 current_state = STATE.FLOCK;
                                 break;
                         };
-
-
-
-
-                        // if (avoid) {
-                        //     avoid = false; ///??
-                        //     seek = true;                          
-                        // } else {
-
-                        //     if (seek) {
-
-                        //         seek = false;
-                                
-                            
-                        //     } else {
-
-                        //         avoid = true;
-                            
-                        //     }
-                        // }
-                           
                     });
 
                     canvas.addEventListener("mouseout", function(eventInfo){
                         current_state = STATE.HIDE;
-                        // seek = false;
-                        // i = 2;
                     });
 
                     $(window).resize(function(){
@@ -138,16 +114,11 @@
         
                     //abrupt change from resting to this
                     var ratio = (Math.sqrt( square(target.x - this.x) + square(target.y - this.y) ) / (canvas.width));
-                    this.r = Math.floor ( 25 * ratio ) + 1;
+                    
+                    /* attempt to smooth REST -> FLOCK */
+                    if(current_state == STATE.REST) this.r = ((Math.floor ( 25 * ratio ) + 1) + this.r * 3) / 4;
+                    else this.r = Math.floor ( 25 * ratio ) + 1;
 
-                    // if (this.i == 2) { //hide?
-                    //     this.r = ((Math.floor ( 25 * ratio ) + 1) + this.r * 3) / 4;
-
-                    // } else {
-                    //     this.r =  Math.floor ( 25 * ratio ) + 1;
-                    // }
-
-                    //TODO keep everything within the bounds
                     switch(current_state){
 
                         case STATE.HIDE:
@@ -155,9 +126,8 @@
                             var xx = (target.x - this.x);
                             var yy = (target.y - this.y);
                             var rr = (Math.sqrt( square(xx) + square(yy) ) / (canvas.width / 2));
-                            //this.r =  Math.floor ( 25 * ratio ) + 1;
-                            this.r = ((Math.floor ( 25 * ratio ) + 1) + this.r * 3) / 4;
-
+                            this.r =  Math.floor ( 25 * ratio ) + 1;
+                            
                             this.x += (xx * 2) / (this.r + this.lag);
                             this.y += (yy * 2) / (this.r + this.lag);
                             break;
@@ -225,8 +195,13 @@
                                     var yy = (target.y - this.y);
                                     if (this.i == 2 || xx > canvas.width / 4 || yy > canvas.height / 4) 
                                         this.subState = SUB.REST;
-                                    this.x += 4 * xx; 
+                                    
+
+                                    this.x = this.x + 2 * xx < CANVAS_BOUND.X && this.x + 2 * xx > 0 ? this.x + 2 * xx :   
+                                    
                                     this.y += 4 * yy;
+
+
                                     break;
                                 };
 
