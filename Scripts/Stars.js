@@ -65,9 +65,9 @@
                         //may want to do more here ... EXPLODE
                         switch (current_state){
                 
-                            case STATE.HIDE:
-                                current_state = STATE.FLOCK;
-                                break;
+                            // case STATE.HIDE:
+                            //     current_state = STATE.FLOCK;
+                            //     break;
                             case STATE.EXPLODE:
                                 current_state = STATE.HIDE;
                                 break;
@@ -83,7 +83,8 @@
                     });
 
                     canvas.addEventListener("mouseout", function(eventInfo){
-                        current_state = STATE.HIDE;
+                        //current_state = STATE.HIDE;
+
                     });
 
                     $(window).resize(function(){
@@ -164,10 +165,10 @@
                                 default:
                                     
                                     /* ESCAPE DISTANCE */
-                                    if (Math.abs(target.x - this.x) > ESCAPE_BOUND.X || Math.abs(target.y - this.y) > ESCAPE_BOUND.Y ){
-                                        this.subState = SUB.REST;
-                                        break;
-                                    }
+                                    // if (Math.abs(target.x - this.x) > ESCAPE_BOUND.X || Math.abs(target.y - this.y) > ESCAPE_BOUND.Y ){
+                                    //     this.subState = SUB.REST;
+                                    //     break;
+                                    // }
 
                                     this.x += (target.x - this.x) * .5 / (this.r + this.lag + lagger);
                                     this.y += (target.y - this.y) * .5 / (this.r + this.lag + lagger);
