@@ -69,7 +69,7 @@
                             //     current_state = STATE.FLOCK;
                             //     break;
                             case STATE.EXPLODE:
-                                current_state = STATE.REST;
+                                //current_state = STATE.REST;
                                 //current_state = STATE.HIDE;
                                 break;
                             case STATE.FLOCK:
