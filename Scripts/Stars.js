@@ -71,8 +71,9 @@
                     var ratio = (Math.sqrt( square(target.x - this.x) + square(target.y - this.y) ) / (canvas.width));
                     if (this.i == 2) {
                         this.r = ((Math.floor ( 25 * ratio ) + 1) + this.r * 3) / 4;
-
                     } else {
+
+
                         this.r =  Math.floor ( 25 * ratio ) + 1;
                     }
 
@@ -106,7 +107,6 @@
 
                         if (this.i == 2 || xx > canvas.width / 4 || yy > canvas.height / 4){
                             
-                            if (i != 2) this.t = {x: Math.floor((Math.random() * canvas.width) + 1), y: Math.floor((Math.random() * canvas.height) + 1)};
 
                             this.i = 2;
 
@@ -118,6 +118,8 @@
 
 
                         } else {
+
+                            this.t = {x: Math.floor((Math.random() * canvas.width) + 1), y: Math.floor((Math.random() * canvas.height) + 1)};
 
                             this.x += 4 * xx; 
                             this.y += 4 * yy;
