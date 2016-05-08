@@ -86,20 +86,17 @@
 
                     if (seeking){
                         if (seek){
-                            if (this.i == 0){
-                                
+                            if (this.i == 0){ 
                                 this.x += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
                                 this.y += (Math.round(Math.random()) * 2 - 1) * (Math.floor((Math.random() * 5) + 1)) * .5 /  ( this.r );
 
                                 if (Math.abs(target.x - this.x) > 35 || Math.abs(target.y - this.y) > 35 ){
                                     this.i = 1;
                                 }
-
                             } else {
 
                                 this.x += (target.x - this.x) * .5 / (this.r + this.lag + lagger);
                                 this.y += (target.y - this.y) * .5 / (this.r + this.lag + lagger);
-
 
                                 if (Math.abs(target.x - this.x) < 3 && Math.abs(target.y - this.y) < 3){
                                     this.i = 0;
@@ -124,12 +121,9 @@
 
 
                             } else {
-
                                 this.x += 4 * xx; 
                                 this.y += 4 * yy;
-
                             }
-
                         }
                     } else { //avoid
 
@@ -168,8 +162,10 @@
 
 
             function loop(){
-                setTimeout(function(){
-                    drawStars();
+                if (canvas.getContext)
+		    setTimeout(function(){
+       
+		    drawStars();
                     loop();
                     if (seek && lagger > 0) lagger -= 10;
 
@@ -191,6 +187,7 @@
             function drawStars() {
                 ctx = canvas.getContext('2d');
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+		
 
                 for (s in stars) {
                     stars[s].React();
