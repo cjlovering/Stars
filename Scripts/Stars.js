@@ -38,7 +38,7 @@
                         //may want to do more here ... EXPLODE
                         seek = false;
                         i = 2;
-                        lagger = 150;
+                        //lagger = 150;
                         //target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};
                        
                     });
