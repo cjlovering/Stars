@@ -34,7 +34,7 @@
 
                         console.log("mouseup");
 
-                           if (!seeking) {
+                           if (!seek) {
                             seeking = true; ///??
                             seek = false;
                             lagger = 150;
