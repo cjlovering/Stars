@@ -31,6 +31,8 @@
                     });
 
                     canvas.addEventListener("mouseup", function(eventInfo){
+
+                        console.log("mouseup");
                         //may want to do more here ... EXPLODE
                         seek = false;
                         lagger = 150;
