@@ -34,20 +34,13 @@
 
                         console.log("mouseup");
 
-                           if (!seek) {
-                            seeking = true; ///??
-                            seek = false;
-                            lagger = 150;
-                            target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};
-                        } else {
-                            seeking = false;
-                        }
-                        /*
+                      
                         //may want to do more here ... EXPLODE
                         seek = false;
+                        i = 2;
                         lagger = 150;
-                        target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};
-                        */
+                        //target = {x: eventInfo.offsetX || eventInfo.layerX, y:eventInfo.offsetY || eventInfo.layerY};
+                       
                     });
 
                     canvas.addEventListener("mouseout", function(eventInfo){
